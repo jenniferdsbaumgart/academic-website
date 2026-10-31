@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jennifer Baumgart</title>
+<meta name="description" content="Jennifer Baumgart, MSc student in Human-Centred AI at Newcastle University and Spärck AI Scholar. Research on evaluating language models, uncertainty and AI for people with fluctuating health.">
+<meta property="og:title" content="Jennifer Baumgart">
+<meta property="og:description" content="Human-centred AI research: evaluating language models where they are deployed, making uncertainty legible, and designing for fluctuating capacity.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<style>
+/* Tokens: lab paper, ink, graphite, rhodamine (the dye from her fibre research, and her brand pink, sobered) */
+:root {
+  --paper: #f5f6f4;
+  --surface: #fbfbfa;
+  --ink: #1a2230;
+  --graphite: #5a6472;
+  --rule: #d9dde1;
+  --rhodamine: #b0215c;
+  --wash: #f4e1e9;
+  --era-research: var(--rhodamine);
+  --era-software: #2f5d7c;
+  --era-chem: #7a8a6a;
+  --serif: "Spectral", Georgia, "Times New Roman", serif;
+  --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161d; --surface: #171c24; --ink: #e6e9ee; --graphite: #98a1ae; --rule: #29303b;
+    --rhodamine: #f07aa6; --wash: #3a1f2c; --era-software: #7fb3d6; --era-chem: #a9b897;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161d; --surface: #171c24; --ink: #e6e9ee; --graphite: #98a1ae; --rule: #29303b;
+  --rhodamine: #f07aa6; --wash: #3a1f2c; --era-software: #7fb3d6; --era-chem: #a9b897;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16.5px; line-height: 1.6; }
+a { color: var(--rhodamine); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--rhodamine); outline-offset: 3px; border-radius: 3px; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 16px; top: 12px; background: var(--surface); padding: 8px 12px; z-index: 20; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+/* Top bar */
+.bar { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+.bar .wrap { display: flex; align-items: center; gap: 22px; height: 56px; }
+.bar .me { font-family: var(--serif); font-weight: 600; font-size: 18px; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.bar .sections, .bar .tools { display: flex; align-items: center; gap: 22px; font-size: 15px; font-weight: 500; }
+.bar .sections { margin-left: auto; }
+.bar .tools { gap: 18px; }
+.bar .sections a, .bar .tools a { color: var(--graphite); text-decoration: none; }
+.bar .sections a:hover, .bar .tools a:hover { color: var(--ink); }
+.bar .sections a.active { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rhodamine); text-decoration-thickness: 2px; text-underline-offset: 7px; }
+main section[id] { scroll-margin-top: 72px; }
+.theme { border: 1px solid var(--rule); background: transparent; color: var(--graphite); border-radius: 999px; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer; }
+.theme:hover { color: var(--ink); border-color: var(--graphite); }
+.theme svg { width: 16px; height: 16px; }
+.theme .sun { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .theme .sun { display: block; } :root:not([data-theme="light"]) .theme .moon { display: none; } }
+:root[data-theme="dark"] .theme .sun { display: block; }
+:root[data-theme="dark"] .theme .moon { display: none; }
+
+/* Sections ease in as they reach the viewport; the class is only added by script, so nothing hides without it */
+.reveal { opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+
+/* Hero: the chromatogram is the one bold element */
+.hero { padding: 40px 0 8px; }
+.trace-wrap { position: relative; margin: 0 0 8px; cursor: crosshair; touch-action: pan-y; border-radius: 4px; }
+.trace { display: block; width: 100%; height: auto; overflow: visible; }
+.trace .line { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; opacity: .78; }
+.trace .peak { fill: var(--wash); stroke: none; }
+.trace .peakline { fill: none; stroke: var(--rhodamine); stroke-width: 2; }
+.trace .axis { stroke: var(--rule); stroke-width: 1; }
+.trace .note { font-family: var(--serif); font-style: italic; font-size: 17px; fill: var(--graphite); }
+/* Probe: a cursor that snaps to each peak and reads out that moment of the career */
+.trace .probe { opacity: 0; transition: opacity .2s; pointer-events: none; }
+.trace .probe line { stroke: var(--graphite); stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+.trace .probe circle { fill: var(--paper); stroke: var(--rhodamine); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.trace .probe-x, .trace .probe circle { transition: transform .25s cubic-bezier(.3,.7,.4,1); }
+.trace-wrap.probing .probe { opacity: 1; }
+.readout { position: absolute; left: 0; top: 0; transform: translateY(calc(-100% - 10px)); max-width: min(320px, 100%); display: flex; align-items: baseline; gap: 8px; background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 11px; font-size: 14px; line-height: 1.35; box-shadow: 0 6px 18px rgb(0 0 0 / .08); opacity: 0; transition: opacity .2s; pointer-events: none; }
+.readout .dot { position: relative; top: 1px; }
+.readout b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.trace-wrap.probing .readout { opacity: 1; }
+.trace-hint { margin: 0; text-align: right; font-size: 13px; color: var(--graphite); }
+.trace-hint .touch { display: none; }
+@media (hover: none) { .trace-hint .touch { display: inline; } .trace-hint .mouse { display: none; } }
+@media (prefers-reduced-motion: reduce) { .trace .probe-x, .trace .probe circle, .readout { transition: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .trace .line, .trace .peakline { stroke-dasharray: 3000; stroke-dashoffset: 3000; animation: draw 2.4s cubic-bezier(.45,.05,.3,1) .2s forwards; }
+  .trace .peak, .trace .note { opacity: 0; animation: appear .8s ease 2.1s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes appear { to { opacity: 1; } }
+}
+.hero-grid { display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: end; }
+h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(44px, 7.4vw, 76px); line-height: 1; letter-spacing: -0.02em; margin: 0 0 22px; }
+.lede { font-family: var(--serif); font-size: clamp(21px, 2.5vw, 25px); line-height: 1.45; margin: 0 0 18px; max-width: 34em; }
+.status { color: var(--graphite); margin: 0 0 20px; max-width: 40em; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.links a { display: inline-block; padding: 7px 14px; border: 1px solid var(--rule); border-radius: 999px; color: var(--ink); text-decoration: none; font-weight: 500; font-size: 15px; background: var(--surface); }
+.links a:hover { border-color: var(--rhodamine); color: var(--rhodamine); }
+.links a.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.links a.primary:hover { background: var(--rhodamine); border-color: var(--rhodamine); color: #fff; }
+.portrait { margin: 0; }
+.portrait img { display: block; width: 100%; height: auto; aspect-ratio: 476 / 500; object-fit: cover; border-radius: 4px; background: var(--rule); }
+
+/* Sections */
+main section { padding: 72px 0 0; }
+h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -0.01em; margin: 0 0 8px; }
+.intro { color: var(--graphite); max-width: 40em; margin: 0 0 32px; }
+h3 { font-family: var(--serif); font-weight: 600; font-size: 21px; line-height: 1.3; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+
+/* Research questions: three, not a sequence, each marked by a small peak */
+.questions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.q svg { width: 44px; height: 22px; display: block; margin-bottom: 14px; }
+.q svg path { fill: none; stroke: var(--rhodamine); stroke-width: 2; stroke-linecap: round; }
+.q p { margin: 0; }
+
+/* Current work: the one highlighted block */
+.current { border-left: 3px solid var(--rhodamine); background: var(--surface); padding: 24px 28px; border-radius: 0 6px 6px 0; max-width: 46em; }
+.current .state { display: inline-block; font-size: 14px; font-weight: 600; color: var(--rhodamine); background: var(--wash); padding: 2px 10px; border-radius: 999px; margin-bottom: 12px; }
+.current p:last-child { margin-bottom: 0; }
+
+/* Methods: four areas, so each reader finds their own keywords */
+.methods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.methods h3 { font-size: 18px; padding-bottom: 8px; border-bottom: 2px solid var(--rhodamine); margin-bottom: 12px; }
+.methods ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 15.5px; color: var(--ink); }
+@media (max-width: 960px) { .methods { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .methods { grid-template-columns: 1fr; gap: 24px; } }
+
+/* Projects */
+.projects { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+.project { padding: 22px 0; border-top: 1px solid var(--rule); }
+.project .role { color: var(--graphite); font-size: 15px; margin: 0 0 8px; }
+.project h3 a { color: var(--ink); text-decoration-color: var(--rule); }
+.project h3 a:hover { color: var(--rhodamine); text-decoration-color: var(--rhodamine); }
+.project p:last-child { margin-bottom: 0; }
+.project .contrib { font-size: 15px; margin: 0 0 10px; }
+.project .contrib span { display: inline-block; font-weight: 600; color: var(--rhodamine); margin-right: 6px; }
+.project .plinks { margin: 10px 0 0; font-size: 15px; font-weight: 500; }
+
+/* Photographs: column widths follow each image's aspect ratio, so each row shares one height */
+.gallery { display: grid; gap: 28px 16px; }
+.gallery .row { display: grid; gap: 16px; grid-template-columns: 1.42fr 1.42fr; }
+.gallery .row:nth-child(2) { grid-template-columns: 2.06fr .8fr; }
+.gallery .row:nth-child(3) { grid-template-columns: 1.685fr 1fr; }
+.gallery figure { margin: 0; }
+.gallery img { display: block; width: 100%; height: auto; border-radius: 4px; background: var(--rule); }
+figcaption { color: var(--graphite); font-size: 14px; line-height: 1.45; margin-top: 8px; }
+.zoom { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 4px; }
+.zoom img { transition: filter .2s; }
+.zoom:hover img { filter: brightness(1.06); }
+
+/* Lightbox */
+.lightbox { border: 0; padding: 0; background: transparent; max-width: min(1100px, 94vw); max-height: 94vh; overflow: visible; color: #e6e9ee; }
+.lightbox::backdrop { background: rgb(10 12 16 / .88); }
+.lightbox img { display: block; max-width: 100%; max-height: 80vh; width: auto; height: auto; margin: 0 auto; border-radius: 4px; }
+.lightbox p { margin: 12px 0 0; font-size: 15px; text-align: center; color: #c3c9d2; }
+.lightbox .lb-bar { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
+.lightbox button { font: inherit; font-size: 14px; color: #e6e9ee; background: rgb(255 255 255 / .08); border: 1px solid rgb(255 255 255 / .2); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.lightbox button:hover { background: rgb(255 255 255 / .16); }
+
+
+/* Timeline: real chronology, coloured by career */
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 28px; padding: 0; list-style: none; font-size: 15px; color: var(--graphite); }
+.legend li { display: flex; align-items: center; }
+.legend .label { margin-right: 4px; }
+.legend button { display: inline-flex; align-items: center; gap: 8px; font: inherit; color: var(--graphite); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 13px 4px 11px; cursor: pointer; }
+.legend button:hover { color: var(--ink); border-color: var(--graphite); }
+.legend button[aria-pressed="true"] { color: var(--ink); background: var(--surface); border-color: var(--ink); }
+.timeline li { transition: opacity .25s; }
+.timeline li.dim { opacity: .25; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dot.r { background: var(--era-research); } .dot.s { background: var(--era-software); } .dot.c { background: var(--era-chem); }
+.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 117px; top: 6px; bottom: 6px; width: 1px; background: var(--rule); }
+.timeline li { display: grid; grid-template-columns: 100px 34px 1fr; align-items: start; padding: 0 0 22px; }
+.timeline .yr { font-variant-numeric: tabular-nums; color: var(--graphite); font-size: 15px; padding-top: 2px; text-align: right; padding-right: 0; }
+.timeline .dot { margin: 8px auto 0; box-shadow: 0 0 0 4px var(--paper); position: relative; }
+.timeline .t { font-weight: 600; }
+.timeline .d { color: var(--graphite); margin: 2px 0 0; max-width: 42em; }
+
+/* Writing */
+.quote { margin: 0 0 24px; padding: 0; max-width: 32em; }
+.quote p { font-family: var(--serif); font-size: clamp(24px, 3vw, 30px); line-height: 1.35; margin: 0 0 12px; }
+.quote footer { color: var(--graphite); font-size: 15px; }
+.read { font-weight: 600; }
+.copy { font: inherit; font-weight: 500; font-size: 15px; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.copy:hover { border-color: var(--rhodamine); color: var(--rhodamine); }
+
+/* Honours and service */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.plain { list-style: none; margin: 0; padding: 0; }
+.plain li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--rule); }
+.plain .when { color: var(--graphite); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.foot { margin-top: 88px; border-top: 1px solid var(--rule); padding: 24px 0 40px; color: var(--graphite); font-size: 15px; }
+.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+
+@media (max-width: 860px) {
+  .questions { grid-template-columns: 1fr; gap: 28px; }
+  .projects, .cols { grid-template-columns: 1fr; gap: 0; }
+  .cols > div + div { margin-top: 36px; }
+  .hero-grid { grid-template-columns: 1fr 220px; gap: 28px; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .bar .wrap { flex-wrap: wrap; height: auto; gap: 0 18px; padding-top: 11px; }
+  .bar .me { flex: 1; }
+  .bar .sections { order: 3; flex: 0 0 100%; margin: 0; padding: 9px 0 11px; gap: 20px; overflow-x: auto; scrollbar-width: none; position: relative; }
+  .bar .sections::-webkit-scrollbar { display: none; }
+  .bar .sections a { white-space: nowrap; }
+  .bar .sections::after { content: ""; flex: 0 0 1px; }
+  main section[id] { scroll-margin-top: 112px; }
+  .hero { padding-top: 24px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .portrait { order: -1; width: 180px; }
+  main section { padding-top: 56px; }
+  .timeline::before { left: 7px; }
+  .timeline li { grid-template-columns: 30px 1fr; }
+  .timeline .dot { grid-column: 1; grid-row: 1 / span 2; margin: 7px 0 0 2px; }
+  .timeline .yr { grid-column: 2; text-align: left; padding: 0; font-size: 14px; }
+  .timeline .body { grid-column: 2; }
+  .current { padding: 20px; }
+  .gallery .row, .gallery .row:nth-child(n) { grid-template-columns: 1fr; gap: 24px; }
+  .gallery .row:nth-child(2) figure:last-child img { aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 20%; }
+  .trace .note { display: none; }
+}
+@media print {
+  .bar, .theme, .trace-wrap, .trace-hint, .copy { display: none; }
+  .reveal { opacity: 1; transform: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="me" href="#top">Jennifer Baumgart</a>
+    <nav class="sections" aria-label="Sections">
+      <a href="#research">Research</a>
+      <a href="#background">Background</a>
+      <a href="#methods">Methods</a>
+      <a href="#projects">Projects</a>
+      <a href="#writing">Writing</a>
+    </nav>
+    <div class="tools">
+      <a href="cv.pdf">CV</a>
+      <button class="theme" type="button" aria-label="Switch between light and dark theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap" id="top">
+
+  <section class="hero" aria-labelledby="name">
+    <div class="trace-wrap" tabindex="0" role="group" aria-label="Career trace. Use the left and right arrow keys to read each peak.">
+    <svg class="trace" viewBox="0 20 1200 190" role="img" aria-label="A chromatogram: a noisy baseline with one clearly resolved peak.">
+      <line class="axis" x1="0" y1="200" x2="1200" y2="200"/>
+      <path class="peak" d="M873,200 L873,197.8 L876,196.7 L879,193.0 L882,188.2 L885,177.2 L888,161.0 L891,135.9 L894,106.9 L897,76.1 L900,51.7 L903,33.3 L906,30.5 L909,43.5 L912,64.4 L915,93.2 L918,124.5 L921,147.4 L924,167.6 L927,179.7 L930,185.6 L933,190.0 L936,193.9 L936,200 Z"/>
+      <path class="line" d="M0,195.1 L3,195.3 L6,193.6 L9,195.1 L12,193.8 L15,194.3 L18,195.4 L21,194.3 L24,195.9 L27,195.1 L30,196.4 L33,196.6 L36,195.8 L39,194.7 L42,196.7 L45,196.3 L48,194.9 L51,193.7 L54,194.4 L57,194.5 L60,192.4 L63,194.6 L66,192.0 L69,193.3 L72,193.5 L75,193.5 L78,193.0 L81,191.8 L84,193.9 L87,193.1 L90,193.5 L93,194.8 L96,194.8 L99,196.8 L102,197.3 L105,197.4 L108,196.5 L111,197.5 L114,198.0 L117,197.3 L120,197.7 L123,198.0 L126,196.4 L129,196.4 L132,197.3 L135,195.7 L138,194.3 L141,190.5 L144,186.9 L147,184.3 L150,180.8 L153,185.1 L156,188.4 L159,191.8 L162,196.6 L165,197.4 L168,199.6 L171,198.3 L174,198.5 L177,199.3 L180,198.6 L183,200.3 L186,199.1 L189,199.2 L192,198.9 L195,198.9 L198,197.3 L201,196.5 L204,197.3 L207,196.2 L210,197.4 L213,195.2 L216,195.0 L219,193.8 L222,194.2 L225,195.6 L228,195.4 L231,194.8 L234,196.8 L237,195.8 L240,196.9 L243,197.2 L246,197.6 L249,195.7 L252,197.5 L255,197.0 L258,196.4 L261,194.8 L264,196.6 L267,195.1 L270,194.4 L273,192.9 L276,192.5 L279,191.7 L282,192.1 L285,189.2 L288,184.8 L291,176.2 L294,167.5 L297,162.5 L300,159.7 L303,162.9 L306,170.9 L309,179.3 L312,186.6 L315,192.4 L318,195.7 L321,195.8 L324,196.5 L327,196.2 L330,195.2 L333,195.9 L336,196.2 L339,195.7 L342,195.3 L345,196.8 L348,194.2 L351,194.4 L354,194.0 L357,194.2 L360,195.4 L363,195.5 L366,196.6 L369,195.5 L372,197.6 L375,198.1 L378,198.2 L381,198.9 L384,198.9 L387,200.2 L390,200.7 L393,200.5 L396,200.8 L399,200.0 L402,200.6 L405,197.0 L408,195.0 L411,192.4 L414,189.1 L417,189.0 L420,191.7 L423,195.2 L426,194.7 L429,194.7 L432,196.2 L435,196.1 L438,197.2 L441,197.3 L444,196.8 L447,197.2 L450,195.9 L453,198.0 L456,198.6 L459,196.2 L462,197.5 L465,198.5 L468,197.3 L471,198.5 L474,196.8 L477,195.1 L480,194.9 L483,194.8 L486,195.4 L489,194.6 L492,194.6 L495,192.5 L498,192.8 L501,191.8 L504,193.0 L507,193.3 L510,191.7 L513,191.5 L516,192.1 L519,192.6 L522,193.0 L525,193.7 L528,195.5 L531,195.0 L534,195.5 L537,196.1 L540,194.9 L543,191.4 L546,186.2 L549,176.9 L552,165.9 L555,157.1 L558,148.7 L561,147.2 L564,152.2 L567,162.8 L570,173.1 L573,180.8 L576,184.7 L579,183.8 L582,177.8 L585,170.6 L588,166.0 L591,166.7 L594,171.1 L597,178.5 L600,188.4 L603,192.7 L606,195.5 L609,197.6 L612,198.3 L615,199.2 L618,199.9 L621,198.0 L624,199.0 L627,197.3 L630,196.5 L633,197.7 L636,197.4 L639,195.6 L642,196.0 L645,197.5 L648,197.6 L651,197.7 L654,195.7 L657,196.3 L660,198.4 L663,196.8 L666,196.7 L669,197.9 L672,198.9 L675,198.5 L678,199.7 L681,199.9 L684,197.0 L687,197.6 L690,197.5 L693,195.8 L696,196.6 L699,194.8 L702,194.4 L705,195.5 L708,194.9 L711,194.4 L714,194.2 L717,193.0 L720,193.9 L723,193.5 L726,194.4 L729,192.5 L732,194.3 L735,194.4 L738,194.3 L741,193.6 L744,194.8 L747,192.4 L750,190.9 L753,186.2 L756,180.8 L759,178.7 L762,178.0 L765,182.7 L768,188.2 L771,189.6 L774,193.2 L777,192.9 L780,192.3 L783,192.7 L786,193.4 L789,193.0 L792,193.2 L795,192.9 L798,195.2 L801,194.5 L804,196.0 L807,196.5 L810,195.7 L813,197.0 L816,197.3 L819,197.1 L822,196.9 L825,198.4 L828,198.0 L831,198.2 L834,198.0 L837,197.3 L840,197.7 L843,197.2 L846,197.0 L849,195.5 L852,196.0 L855,195.4 L858,195.2 L861,197.2 L864,196.5 L867,195.7 L870,196.0 L873,197.8 L876,196.7 L879,193.0 L882,188.2 L885,177.2 L888,161.0 L891,135.9 L894,106.9 L897,76.1 L900,51.7 L903,33.3 L906,30.5 L909,43.5 L912,64.4 L915,93.2 L918,124.5 L921,147.4 L924,167.6 L927,179.7 L930,185.6 L933,190.0 L936,193.9 L939,194.1 L942,194.4 L945,195.2 L948,195.9 L951,195.8 L954,194.9 L957,197.1 L960,195.7 L963,196.0 L966,197.1 L969,196.1 L972,195.0 L975,194.9 L978,195.7 L981,192.7 L984,192.8 L987,191.9 L990,193.9 L993,193.2 L996,193.7 L999,191.5 L1002,193.0 L1005,193.6 L1008,193.1 L1011,192.1 L1014,192.8 L1017,194.8 L1020,195.4 L1023,192.8 L1026,192.2 L1029,188.2 L1032,184.3 L1035,178.0 L1038,171.6 L1041,171.6 L1044,176.2 L1047,179.9 L1050,187.0 L1053,191.0 L1056,195.5 L1059,194.4 L1062,196.9 L1065,194.7 L1068,195.8 L1071,196.2 L1074,195.8 L1077,195.0 L1080,197.2 L1083,198.1 L1086,197.4 L1089,198.7 L1092,199.6 L1095,199.9 L1098,200.6 L1101,200.4 L1104,200.2 L1107,200.0 L1110,197.8 L1113,196.7 L1116,192.7 L1119,190.9 L1122,190.5 L1125,193.7 L1128,195.5 L1131,197.4 L1134,195.5 L1137,195.8 L1140,196.6 L1143,195.6 L1146,194.2 L1149,196.5 L1152,194.7 L1155,195.9 L1158,196.0 L1161,195.3 L1164,196.7 L1167,196.6 L1170,196.2 L1173,195.5 L1176,197.2 L1179,195.7 L1182,195.8 L1185,195.7 L1188,195.9 L1191,195.5 L1194,195.8 L1197,195.1 L1200,194.7"/>
+      <path class="peakline" d="M873,197.8 L876,196.7 L879,193 L882,188.2 L885,177.2 L888,161 L891,135.9 L894,106.9 L897,76.1 L900,51.7 L903,33.3 L906,30.5 L909,43.5 L912,64.4 L915,93.2 L918,124.5 L921,147.4 L924,167.6 L927,179.7 L930,185.6 L933,190 L936,193.9"/>
+      <text class="note" x="928" y="52">signal, not noise</text>
+      <g class="probe" aria-hidden="true">
+        <g class="probe-x"><line x1="0" y1="20" x2="0" y2="200"/><circle cx="0" cy="0" r="5"/></g>
+      </g>
+    </svg>
+    <div class="readout" aria-live="polite"></div>
+    </div>
+    <p class="trace-hint"><span class="mouse">Hover over the peaks to read the trace</span><span class="touch">Tap the peaks to read the trace</span></p>
+
+    <div class="hero-grid">
+      <div>
+        <h1 id="name">Jennifer Baumgart</h1>
+        <p class="lede">I work where measurement meets machine learning: turning noisy signals, from mass spectra to clinical records and language, into results that people can trust and act on.</p>
+        <p class="status">I am an MSc student in Human-Centred AI at Newcastle University, funded by a <a href="https://www.ncl.ac.uk/press/articles/latest/2025/06/sparckaischolarships/">Spärck AI Scholarship</a>, and I am looking for PhD opportunities starting in 2027. Before research, I spent seven years as a chemist in analytical and industrial laboratories, then moved into software and AI engineering, most recently building and evaluating LLM systems. If you work on any of the threads below, I would be glad to hear from you.</p>
+        <ul class="links">
+          <li><a class="primary" href="mailto:jenniferdsbaumgart@gmail.com">Email me</a></li>
+          <li><a href="cv.pdf">CV</a></li>
+          <li><a href="https://www.linkedin.com/in/devjenniferds/">LinkedIn</a></li>
+          <li><a href="https://github.com/jenniferdsbaumgart">GitHub</a></li>
+          <!-- <li><a href="https://orcid.org/0000-0000-0000-0000">ORCID</a></li> -->
+        </ul>
+      </div>
+      <figure class="portrait">
+        <img src="photo.webp" alt="Portrait of Jennifer Baumgart" width="476" height="500">
+      </figure>
+    </div>
+  </section>
+
+  <section id="research" aria-labelledby="h-research">
+    <h2 id="h-research">Research interests</h2>
+    <p class="intro">Three threads that run through my chemistry, engineering and AI work, all about the gap between what a system outputs and what a person can safely do with it.</p>
+    <div class="questions">
+      <article class="q">
+        <svg viewBox="0 0 44 22" aria-hidden="true"><path d="M1 20 C10 20 14 19 17 14 C19 9 20 2 22 2 C24 2 25 9 27 14 C30 19 34 20 43 20"/></svg>
+        <h3>Learning from noisy signals</h3>
+        <p>Spectra, images, sensor streams and health records are messy in similar ways: interference, drift and missing context. I am interested in machine learning that recovers real signal from them, from analytical chemistry to biomedical imaging.</p>
+      </article>
+      <article class="q">
+        <svg viewBox="0 0 44 22" aria-hidden="true"><path d="M1 20 C10 20 14 19 17 14 C19 9 20 2 22 2 C24 2 25 9 27 14 C30 19 34 20 43 20"/></svg>
+        <h3>Making uncertainty legible</h3>
+        <p>A model, like an instrument, should show what it measured, what it is inferring and what it cannot support, so that people trust it appropriately: neither too much nor too little.</p>
+      </article>
+      <article class="q">
+        <svg viewBox="0 0 44 22" aria-hidden="true"><path d="M1 20 C10 20 14 19 17 14 C19 9 20 2 22 2 C24 2 25 9 27 14 C30 19 34 20 43 20"/></svg>
+        <h3>Designing for the people downstream</h3>
+        <p>Patients, clinicians and analysts live with a system's output. I want to evaluate and design with them, especially people whose capacity changes from day to day, and to find where models mislead them, including language models that give health advice.</p>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-current">
+    <h2 id="h-current">Current work</h2>
+    <p class="intro">An independent study, designed alongside my MSc.</p>
+    <div class="current">
+      <span class="state">In design, pre-registration planned</span>
+      <h3>Diagnostic overshadowing in LLM health advice</h3>
+      <p>Do general-purpose language models attribute hypermobility-type symptoms to autism or ADHD when the person describing them is a woman, or neurodivergent? A counterfactual audit across five models, varying gender, neurodivergence, symptom presentation and patient versus clinical framing, with human-validated coding and mixed-effects analysis.</p>
+    </div>
+  </section>
+
+  <section id="background" aria-labelledby="h-background">
+    <h2 id="h-background">Two careers, one discipline</h2>
+    <p class="intro">From mass spectra to language models, the work has always been about whether a result can be trusted.</p>
+    <ul class="legend" aria-label="Filter the timeline">
+      <li class="label" aria-hidden="true">Show</li>
+      <li><button type="button" data-era="r" aria-pressed="false"><span class="dot r"></span>Research and study</button></li>
+      <li><button type="button" data-era="s" aria-pressed="false"><span class="dot s"></span>Software and AI</button></li>
+      <li><button type="button" data-era="c" aria-pressed="false"><span class="dot c"></span>Chemistry and forensics</button></li>
+    </ul>
+    <ol class="timeline" reversed>
+      <li><span class="yr">2026–27</span><span class="dot r" title="Research and study"></span><div class="body"><span class="t">MSc Human-Centred AI, Newcastle University</span><p class="d">Spärck AI Scholarship. Elected course representative and member of the School of Computing's Student–Staff Committee.</p></div></li>
+      <li><span class="yr">2026</span><span class="dot s" title="Software and AI"></span><div class="body"><span class="t">Co-founder and CTO, Texlink</span></div></li>
+      <li><span class="yr">2025–26</span><span class="dot s" title="Software and AI"></span><div class="body"><span class="t">AI Software Engineer, Straas.tech</span><p class="d">LLMs, retrieval-augmented generation and the evaluation of LLM systems before and after release.</p></div></li>
+      <li><span class="yr">2024–25</span><span class="dot s" title="Software and AI"></span><div class="body"><span class="t">Frontend Engineer and UI/UX Designer, Minerva Controls</span><p class="d">Interfaces for industrial digital twins and predictive maintenance.</p></div></li>
+      <li><span class="yr">2023–25</span><span class="dot s" title="Software and AI"></span><div class="body"><span class="t">Foundation Degree in Systems Analysis and Development, Uninter</span><p class="d">GPA 9.4/10, alongside freelance full-stack work.</p></div></li>
+      <li><span class="yr">2018–20</span><span class="dot c" title="Chemistry and forensics"></span><div class="body"><span class="t">Postgraduate Specialisation in Criminalistics and Forensic Sciences, IPOG</span><p class="d">Grade 9.5/10.</p></div></li>
+      <li><span class="yr">2013–20</span><span class="dot c" title="Chemistry and forensics"></span><div class="body"><span class="t">Chemist in analytical and industrial laboratories</span><p class="d">Water and effluent analysis, quality control of hospital products, textile colour development, and teaching laboratories at a brewing school.</p></div></li>
+      <li><span class="yr">2017</span><span class="dot r" title="Research and study"></span><div class="body"><span class="t">Detection of cocaine on banknotes by GC–MS</span><p class="d">Undergraduate dissertation at FURB, supervised by Dr Martinho Rau; graded 9.8/10. <a href="essay.html">The story behind it</a></p></div></li>
+      <li><span class="yr">2015</span><span class="dot r" title="Research and study"></span><div class="body"><span class="t">Forensic analysis of lipstick by infrared spectroscopy</span><p class="d">Summer research student at De Montfort University, with Prof Richard Brawn.</p></div></li>
+      <li><span class="yr">2014–15</span><span class="dot c" title="Chemistry and forensics"></span><div class="body"><span class="t">BSc Forensic Science, De Montfort University, Leicester</span><p class="d">A year in the UK on the Science without Borders Scholarship.</p></div></li>
+      <li><span class="yr">2013–14</span><span class="dot r" title="Research and study"></span><div class="body"><span class="t">Enzymatic functionalisation of synthetic fibres</span><p class="d">CNPq research scholarship at FURB, supervised by Prof Jürgen Andreaus: enzymatic treatments, dyeing tests and spectrophotometric analysis of which enzymes significantly improved dyeing.</p></div></li>
+      <li><span class="yr">2012–17</span><span class="dot c" title="Chemistry and forensics"></span><div class="body"><span class="t">BSc Chemistry, Universidade Regional de Blumenau (FURB)</span></div></li>
+    </ol>
+  </section>
+
+  <section id="methods" aria-labelledby="h-methods">
+    <h2 id="h-methods">Methods</h2>
+    <p class="intro">What I can bring to a lab on day one.</p>
+    <div class="methods">
+      <div>
+        <h3>Laboratory and analytical</h3>
+        <ul>
+          <li>GC–MS, infrared spectroscopy and UV–Vis spectrophotometry</li>
+          <li>Sample preparation, extraction and method development</li>
+          <li>Enzymatic treatments and dyeing tests</li>
+          <li>Quality control and colour-fastness testing</li>
+          <li>Water and effluent analysis, microbiological culture</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Data and machine learning</h3>
+        <ul>
+          <li>Python, scikit-learn and data visualisation</li>
+          <li>LLMs, retrieval-augmented generation and agentic workflows</li>
+          <li>Evaluation design: test sets, rubrics, regression testing</li>
+          <li>Experimental design and statistical interpretation</li>
+          <li>Image processing (MSc coursework)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Human-centred methods</h3>
+        <ul>
+          <li>User research, prototyping and usability (Figma)</li>
+          <li>Accessibility to WCAG standards</li>
+          <li>Interfaces for complex model output</li>
+          <li>Human–AI interaction and HCI (MSc coursework)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Software engineering</h3>
+        <ul>
+          <li>TypeScript, React, Next.js and Node.js</li>
+          <li>PostgreSQL and multi-tenant architecture</li>
+          <li>Access control and data protection by design</li>
+          <li>Automated testing with Pytest, Playwright and Selenium</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" aria-labelledby="h-projects">
+    <h2 id="h-projects">Projects</h2>
+    <p class="intro">Systems I designed and built, and where they ended up.</p>
+    <div class="projects">
+      <article class="project">
+        <h3>Noesis</h3>
+        <p class="role">Retrieval-augmented generation platform, 2025 to now</p>
+        <p class="contrib"><span>My role</span> Sole engineer: RAG pipeline, semantic search and evaluation, first at Straas.tech and now independently</p>
+        <p>Built at Straas.tech, where it became a company product for customer-service chatbots, and continued since as my own project. It answers from an organisation's own documents with source citations, and says it does not know when those documents do not cover a question.</p>
+        <p class="plinks"><a href="https://noesis-tau-six.vercel.app">Website</a></p>
+      </article>
+      <article class="project">
+        <h3>Texlink</h3>
+        <p class="role">B2B platform for the fashion supply chain, 2026</p>
+        <p class="contrib"><span>My role</span> Co-founder and CTO, sole engineer from concept to live product</p>
+        <p>Connects clothing brands with garment factories across the production process, with role-based access control and data deletion compliant with Brazil's data protection law (LGPD) through anonymisation. Still in operation.</p>
+        <p class="plinks"><a href="https://www.texlink.com.br">Website (Portuguese)</a></p>
+      </article>
+      <article class="project">
+        <h3>Humanus</h3>
+        <p class="role">Career platform for nurses, 2025. 1st place at the Conecta Saúde Health Tech Hackathon</p>
+        <p class="contrib"><span>My role</span> Design lead and prototype builder, working closely with two nurses and a business specialist</p>
+        <p>A working prototype built in three days, with microlearning, career planning and one-to-one scheduling, addressing the lack of structured career progression for nurses and nursing technicians.</p>
+      </article>
+      <article class="project">
+        <h3>Moodz</h3>
+        <p class="role">Inclusive online group therapy and peer support, 2023 to 2026. Selected for pre-incubation</p>
+        <p class="contrib"><span>My role</span> Founder, product and UX</p>
+        <p>A platform for neurodivergent people and those living with chronic illness, designed around accessibility, safety and dignity rather than engagement. Designing it is where my interest in responsible AI took root: what a system should surface, how it should handle sensitive moments, and when it should defer to a human.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- When the first paper or preprint is out, add this section above "Writing":
+  <section id="publications" aria-labelledby="h-pubs">
+    <h2 id="h-pubs">Publications</h2>
+    <ul class="plain">
+      <li><span><strong>Baumgart, J.</strong> (2027). <a href="#">Title of the preprint</a>. arXiv. <em>Contribution: study design, analysis and writing.</em></span><span class="when">2027</span></li>
+    </ul>
+  </section>
+  -->
+
+  <section id="writing" aria-labelledby="h-writing">
+    <h2 id="h-writing">Writing</h2>
+    <p class="intro">Essays on rigour, AI and the people on the receiving end of both.</p>
+    <blockquote class="quote">
+      <p>“Being determined doesn't mean forcing the result you want. It means refusing to claim one the evidence hasn't earned.”</p>
+      <footer>From <cite>The day the data refused to cooperate</cite>, June 2026</footer>
+    </blockquote>
+    <a class="read" href="essay.html">Read the essay</a>
+  </section>
+
+  <section aria-label="Photographs">
+    <div class="gallery">
+      <div class="row">
+      <figure>
+        <img src="images/sparck-pitch.webp" alt="Jennifer on stage with her team, presenting to an audience seated at round tables" width="1092" height="770" loading="lazy">
+        <figcaption>Presenting the pitch that won the Best Pitch Award at the Spärck AI Scholarship launch hackathon, 2026</figcaption>
+      </figure>
+      <figure>
+        <img src="images/sparck-team.webp" alt="Jennifer and fellow scholars gathered around a laptop, discussing their work" width="1095" height="771" loading="lazy">
+        <figcaption>Working with fellow Spärck AI Scholars during the hackathon</figcaption>
+      </figure>
+      </div>
+      <div class="row">
+      <figure>
+        <img src="images/moodz-pitch.webp" alt="Jennifer presenting Moodz beside a screen showing the Moodz logo" width="896" height="435" loading="lazy">
+        <figcaption>Pitching Moodz, the peer-support platform I founded</figcaption>
+      </figure>
+      <figure>
+        <img src="images/sw-blumenau.webp" alt="Jennifer speaking into a microphone in front of the Startup Weekend Blumenau 2025 banner" width="800" height="1000" loading="lazy">
+        <figcaption>On stage at Startup Weekend Blumenau, 2025</figcaption>
+      </figure>
+      </div>
+      <div class="row">
+      <figure>
+        <img src="images/humanus-team.webp" alt="Jennifer with five members of the Humanus group in front of the Conecta Saúde Vale Europeu banner" width="1100" height="653" loading="lazy">
+        <figcaption>With the Humanus group at the Conecta Saúde Health Tech Hackathon, Blumenau, 2025</figcaption>
+      </figure>
+      <figure>
+        <img src="images/humanus-trophy.webp" alt="A green acrylic trophy shaped like a DNA helix, reading 1st place, Hackathon Health Tech" width="800" height="800" loading="lazy">
+        <figcaption>First place for Humanus</figcaption>
+      </figure>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-honours">
+    <div class="cols">
+      <div>
+        <h2 id="h-honours">Honours</h2>
+        <ul class="plain" style="margin-top:20px">
+          <li><span>Spärck AI Scholarship</span><span class="when">2026</span></li>
+          <li><span>Best Pitch Award, Spärck AI Scholarship launch hackathon</span><span class="when">2026</span></li>
+          <li><span>1st place, Conecta Saúde Health Tech Hackathon</span><span class="when">2025</span></li>
+          <li><span>Science without Borders Scholarship</span><span class="when">2014–15</span></li>
+          <li><span>CNPq research scholarship (PIBITI)</span><span class="when">2013–14</span></li>
+        </ul>
+      </div>
+      <div>
+        <h2 id="h-contact">Get in touch</h2>
+        <p style="margin-top:20px">I am happy to talk about PhD projects, collaborations on LLM evaluation, or anything on this page.</p>
+        <ul class="links">
+          <li><a class="primary" href="mailto:jenniferdsbaumgart@gmail.com">jenniferdsbaumgart@gmail.com</a></li>
+          <li><button class="copy" type="button" data-email="jenniferdsbaumgart@gmail.com" hidden>Copy email</button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<dialog class="lightbox" aria-label="Photograph">
+  <img src="" alt="">
+  <p></p>
+  <div class="lb-bar">
+    <button type="button" data-step="-1" aria-label="Previous photograph">←</button>
+    <button type="button" data-close autofocus>Close</button>
+    <button type="button" data-step="1" aria-label="Next photograph">→</button>
+  </div>
+</dialog>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Jennifer Baumgart, Newcastle upon Tyne</span>
+    <span>Updated November 2026</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var btn = document.querySelector('.theme');
+    var root = document.documentElement;
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = current === 'dark' ? 'light' : 'dark';
+      var apply = function () { root.setAttribute('data-theme', next); };
+      if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(apply);
+      else apply();
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+
+  // Career trace: the probe snaps to the nearest peak and reads out that moment
+  (function () {
+    var peaks = [
+      { x: 150,  y: 180.8, era: 'c', yr: '2012', t: 'BSc Chemistry at FURB' },
+      { x: 300,  y: 159.7, era: 'r', yr: '2013', t: 'First research: enzymes and synthetic fibres' },
+      { x: 417,  y: 189.0, era: 'c', yr: '2014', t: 'A year of forensic science in Leicester' },
+      { x: 561,  y: 147.2, era: 'r', yr: '2017', t: 'Cocaine on banknotes by GC–MS' },
+      { x: 588,  y: 166.0, era: 'c', yr: '2018', t: 'Criminalistics and forensic sciences' },
+      { x: 762,  y: 178.0, era: 's', yr: '2023', t: 'Into software and AI engineering' },
+      { x: 906,  y: 30.5,  era: 'r', yr: '2026', t: 'MSc Human-Centred AI, Newcastle' },
+      { x: 1040, y: 171.6, era: 'r', yr: '2027', t: 'Next: a PhD' }
+    ];
+    var main = 6;
+    var wrap = document.querySelector('.trace-wrap');
+    var svg = wrap.querySelector('svg');
+    var mover = svg.querySelector('.probe-x');
+    var dot = svg.querySelector('.probe circle');
+    var readout = wrap.querySelector('.readout');
+    var current = -1;
+
+    function nearest(evt) {
+      var pt = svg.createSVGPoint();
+      pt.x = evt.clientX; pt.y = evt.clientY;
+      var x = pt.matrixTransform(svg.getScreenCTM().inverse()).x;
+      var best = 0;
+      peaks.forEach(function (p, i) { if (Math.abs(p.x - x) < Math.abs(peaks[best].x - x)) best = i; });
+      return best;
+    }
+
+    function show(i) {
+      var p = peaks[i];
+      wrap.classList.add('probing');
+      if (i === current) return;
+      current = i;
+      mover.style.transform = 'translate(' + p.x + 'px, 0)';
+      dot.style.transform = 'translate(0, ' + p.y + 'px)';
+      dot.style.stroke = 'var(--era-' + { r: 'research', s: 'software', c: 'chem' }[p.era] + ')';
+      readout.innerHTML = '<span class="dot ' + p.era + '" aria-hidden="true"></span><span><b>' + p.yr + '</b> ' + p.t + '</span>';
+      readout.style.left = '0px';
+      var w = wrap.clientWidth, scale = w / 1200;
+      var left = Math.max(0, Math.min(w - readout.offsetWidth, p.x * scale - readout.offsetWidth / 2));
+      readout.style.left = left + 'px';
+      readout.style.top = (p.y - 20) * scale + 'px';
+    }
+
+    function hide() { wrap.classList.remove('probing'); }
+
+    wrap.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') show(nearest(e)); });
+    wrap.addEventListener('pointerdown', function (e) { show(nearest(e)); });
+    wrap.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') hide(); });
+    document.addEventListener('pointerdown', function (e) { if (!wrap.contains(e.target)) hide(); });
+    wrap.addEventListener('focus', function () { show(current < 0 ? main : current); });
+    wrap.addEventListener('blur', hide);
+    wrap.addEventListener('keydown', function (e) {
+      var i = current < 0 ? main : current;
+      if (e.key === 'ArrowRight') i = Math.min(peaks.length - 1, i + 1);
+      else if (e.key === 'ArrowLeft') i = Math.max(0, i - 1);
+      else if (e.key === 'Home') i = 0;
+      else if (e.key === 'End') i = peaks.length - 1;
+      else if (e.key === 'Escape') { hide(); return; }
+      else return;
+      e.preventDefault();
+      show(i);
+    });
+    window.addEventListener('resize', function () { var i = current; current = -1; if (i >= 0 && wrap.classList.contains('probing')) show(i); });
+  })();
+
+  // Timeline filter: pressing a career in the key fades the other two
+  (function () {
+    var buttons = [].slice.call(document.querySelectorAll('.legend button'));
+    var items = [].slice.call(document.querySelectorAll('.timeline li'));
+    items.forEach(function (li) { li.dataset.era = li.querySelector('.dot').classList[1]; });
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var on = btn.getAttribute('aria-pressed') !== 'true';
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn && on)); });
+        items.forEach(function (li) { li.classList.toggle('dim', on && li.dataset.era !== btn.dataset.era); });
+      });
+    });
+  })();
+
+  // Section menu: marks the section being read, and keeps it in view on the phone's scrolling menu
+  (function () {
+    var nav = document.querySelector('.bar .sections');
+    var links = [].slice.call(nav.querySelectorAll('a'));
+    var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var active = -1, queued = false;
+
+    function update() {
+      queued = false;
+      var line = window.innerHeight * 0.35, now = -1;
+      targets.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line) now = i; });
+      if (now === active) return;
+      active = now;
+      links.forEach(function (a, i) {
+        a.classList.toggle('active', i === now);
+        if (i === now) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+      });
+      if (now >= 0 && nav.scrollWidth > nav.clientWidth) {
+        nav.scrollTo({ left: links[now].offsetLeft - 16, behavior: reduce.matches ? 'auto' : 'smooth' });
+      }
+    }
+
+    window.addEventListener('scroll', function () { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  })();
+
+  // Reveal: sections ease in once, the first time they reach the viewport
+  (function () {
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var els = [].slice.call(document.querySelectorAll('main section:not(.hero)'));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) {
+      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+  })();
+
+  // Lightbox: the photographs open larger, with arrow keys to step through them
+  (function () {
+    var box = document.querySelector('.lightbox');
+    if (!box || !box.showModal) return;
+    var big = box.querySelector('img'), cap = box.querySelector('p');
+    var figs = [].slice.call(document.querySelectorAll('.gallery figure'));
+    var at = 0;
+
+    function open(i) {
+      at = (i + figs.length) % figs.length;
+      var img = figs[at].querySelector('img');
+      big.src = img.src; big.alt = img.alt;
+      cap.textContent = figs[at].querySelector('figcaption').textContent;
+      if (!box.open) box.showModal();
+    }
+
+    figs.forEach(function (fig, i) {
+      var img = fig.querySelector('img');
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'zoom';
+      btn.setAttribute('aria-label', 'Enlarge photograph: ' + fig.querySelector('figcaption').textContent);
+      img.parentNode.insertBefore(btn, img);
+      btn.appendChild(img);
+      btn.addEventListener('click', function () { open(i); });
+    });
+
+    box.addEventListener('click', function (e) {
+      if (e.target === box || e.target.hasAttribute('data-close')) box.close();
+      else if (e.target.dataset.step) open(at + Number(e.target.dataset.step));
+    });
+    box.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') open(at + 1);
+      else if (e.key === 'ArrowLeft') open(at - 1);
+    });
+  })();
+
+  // Copy email: shown only where the clipboard is available
+  (function () {
+    var btn = document.querySelector('.copy');
+    if (!btn || !navigator.clipboard) return;
+    btn.hidden = false;
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(btn.dataset.email).then(function () {
+        btn.textContent = 'Copied ✓';
+        setTimeout(function () { btn.textContent = 'Copy email'; }, 2000);
+      });
+    });
+  })();
+</script>
+</body>
+</html>

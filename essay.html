@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The day the data refused to cooperate · Jennifer Baumgart</title>
-<meta name="description" content="An essay on rigour, AI and human-centred engineering, from a contaminated GC–MS sample to language models.">
+<meta name="description" content="An essay on rigour, AI and human-centred engineering, from a failed clean-up in a GC–MS study to language models.">
 <link rel="canonical" href="https://jenniferbaumgart.com/essay">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://jenniferbaumgart.com/essay">
 <meta property="og:title" content="The day the data refused to cooperate · Jennifer Baumgart">
-<meta property="og:description" content="An essay on rigour, AI and human-centred engineering, from a contaminated GC–MS sample to language models.">
+<meta property="og:description" content="An essay on rigour, AI and human-centred engineering, from a failed clean-up in a GC–MS study to language models.">
 <meta property="og:image" content="https://jenniferbaumgart.com/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -59,15 +59,15 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 <p class="meta">Essay, 27 June 2026 · Updated November 2026</p>
 <h1>The day the data refused to cooperate</h1>
 
-<p>The banknotes were filthier than anyone had warned me. I was trying to identify cocaine contamination on circulated currency for my undergraduate dissertation at FURB, and the gas chromatography-mass spectrometry system was giving me noise where I needed signal. The samples carried far more organic interference than the literature had prepared me for, and the extraction solvent I had chosen, the one that should have worked, wasn't pulling clean results.</p>
+<p>The banknotes were filthier than anyone had warned me. I was trying to identify cocaine contamination on circulated currency for my undergraduate dissertation at FURB, and the gas chromatography-mass spectrometry system was giving me noise where I needed signal. The samples carried far more organic interference than the literature had prepared me for, and the clean-up I had planned, the step that should have removed it, did not work: it retained the cocaine itself and left the lipids behind.</p>
 
-<p>There were at least three moments where I could have stopped. I could have written up what I had, noise and all, and called it an inherent limitation of the matrix. I could have nudged the baseline integration toward the answer I wanted and moved on to graduation. Forcing a result is always available to you in science. It is the easiest thing in the world.</p>
+<p>I could have written the study up as though the method had worked. Forcing a result is always available to you in science. It is the easiest thing in the world.</p>
 
-<p>Instead, I changed the solvent system to a more selective chloroform-methanol mixture. Then I adjusted the GC-MS oven temperature programme, slowing the ramp to separate the target peaks from the background interference. When literature data still wasn't enough, I contacted the forensic police to obtain a purer reference sample for validation. It took longer, it was frustrating, and somewhere in that process I learned the thing that has shaped everything I've done since: being determined doesn't mean forcing the result you want. It means refusing to claim one the evidence hasn't earned.</p>
+<p>I extracted with acetonitrile throughout, and I had compared two GC temperature programmes and chosen the faster. Larger elution volumes, nitrogen concentration and cold precipitation did not rescue the clean-up, and with no reference standard I could not test how much cocaine I was recovering. So the study became qualitative: I could say that cocaine was there, and not how much. I treated the compounds extracted alongside it as data, and their correlations grouped the city's areas into three chemical profiles, which I offered as a hypothesis rather than a conclusion. It took longer, it was frustrating, and somewhere in that process I learned the thing that has shaped everything I've done since: being determined doesn't mean forcing the result you want. It means refusing to claim one the evidence hasn't earned.</p>
 
 <h2>From chemistry to AI</h2>
 
-<p>I don't run chromatographs anymore. I build AI systems: production-ready retrieval pipelines, large language models, and the architecture that now sits between people and critical decisions. As a founding engineer and, most recently, a CTO, I used tools that look entirely different from a chemistry lab. The discipline turned out to be identical.</p>
+<p>I don't run chromatographs anymore. I build software, including retrieval-augmented generation systems and the evaluation around them. As an engineer and, most recently, a CTO, I used tools that look entirely different from a chemistry lab. The discipline turned out to be identical.</p>
 
 <figure>
   <img src="images/at-work.webp" alt="Jennifer working at a laptop with a keyboard and mouse" width="658" height="612" loading="lazy">
@@ -78,13 +78,13 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 
 <p>Here is what the two worlds share. A dirty sample can produce a clean-looking peak that means absolutely nothing. A language model can produce a fluent, confident answer that is just as empty. In both cases, the danger isn't an obvious, crashing error; it is a highly plausible output that hides missing evidence.</p>
 
-<p>The hardest problem I work on in software isn't making a system sound intelligent. It's making it honest about what it doesn't know. In my engineering practice, I treat every LLM output not as a definitive answer, but as a hypothesis that requires programmatic evaluation, guardrails, and rigorous evaluation frameworks to flag when the system is simply filling the silence with syntax.</p>
+<p>The hardest problem I work on in software isn't making a system sound intelligent. It's making it honest about what it doesn't know. In my engineering practice, I treat every LLM output not as a definitive answer, but as a hypothesis that requires evaluation: test sets, rubric scoring and regression checks that flag when the system is simply filling the silence with syntax.</p>
 
 <h2>Why this matters</h2>
 
 <p>This stopped being abstract for me a long time ago. I know what it feels like to sit in a clinic holding a folder of mismatched paper records, explaining for the fourth time to a specialist that a symptom isn't an isolated event but part of a systemic pattern. Living with Autism, ADHD, EDS, and POTS means knowing from the inside how much invisible, heavy labour a fragmented system pushes onto the people it is supposed to help, usually the exact people with the least energy to spare.</p>
 
-<p>When a digital health tool assumes a stable, predictable, consistent user, it quietly excludes everyone whose cognitive or physical capacity changes from one Tuesday to the next. That isn't an edge case. For millions of people, a fluctuating reality is the only reality there is.</p>
+<p>When a digital health tool assumes a stable, predictable, consistent user, it quietly excludes everyone whose cognitive or physical capacity changes from one Tuesday to the next. That isn't an edge case. For many people, a fluctuating reality is the only reality there is.</p>
 
 <p>So this is the work I want to do. AI for the people downstream of clinical decisions, built for fluctuating bodies and minds rather than an imagined average user. I want to build systems that adapt to the person instead of demanding that a vulnerable person distort themselves to adapt to the software. We need tools that are honest about uncertainty, because in healthcare, a confident wrong answer is a dangerous thing.</p>
 
